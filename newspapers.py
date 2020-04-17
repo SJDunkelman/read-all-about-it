@@ -5,6 +5,7 @@ Credit: Simon Dunkelman (www.github.com/SJDunkelman)
 Newspaper class for generating urls to pass to scraper class
 '''
 import requests
+import re
 from datetime import datetime
 import random
 
@@ -161,4 +162,60 @@ class WSJ(Newspaper):
                 else:
                     url = entry.find('a')['href']
                     urls.append(url)
+        return urls
+    
+class LATimes(Newspaper):
+    def __init__(self, date, t):
+        super().__init__(date, t, 
+                         base = "latimes.com/sitemap/")
+    
+    def get_urls(self):
+        urls = []
+        months = []
+        for subtract_days in range(self.t):
+            day, month, year = self.minus_day(subtract_days)
+            months.append(month)
+        months = set(months)
+        
+        final_date = self.date - timedelta(self.t)
+        
+        for idx, month in enumerate(months):
+            ## Extract first page of month
+            archive_url = self.base + str(year) + "/" + two_digit_string(month)
+            archive_page = requests.get(archive_url, headers=headers).text
+            soup = BeautifulSoup(archive_page,"lxml")
+            
+            ## Get number of pages for month
+            page_menu_div = soup.find("div",{"class":"ArchivePage-pagination"})
+            
+            pages = [link.text for link in page_menu_div.find_all('a')]
+            
+            page_iter = iter(pages)
+            
+            while True:
+                try:    
+                    ## Iterate element of pages
+                    page = next(page_iter)
+                
+                    ## Scrape new page of month
+                    archive_url = self.base + str(year) + "/" + two_digit_string(month) + "?p=" + page
+                    archive_page = requests.get(archive_url, headers=headers).text
+                    soup = BeautifulSoup(archive_page,"lxml")
+                    
+                    content_box = soup.find("ul", {"class":"ArchivePage-menu"})
+                    for article in content_box.find_all("a"):
+                        url = article['href']
+                        if idx == len(months)-1:
+                            ## Check if dates are in range
+                            article_date_str = re.search(r'(\d\d\d\d+-\d\d+-\d\d)',url)
+                            if article_date_str:
+                                article_date = datetime.strptime(article_date_str.group(0),"%Y-%m-%d")
+                                if article_date >= final_date:
+                                    urls.append(url)
+                                else:
+                                    raise StopIteration
+                        else:
+                            urls.append(url)
+                except StopIteration:
+                    break
         return urls
