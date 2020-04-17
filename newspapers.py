@@ -31,14 +31,21 @@ def month_to_str(m):
 
 ## Base class: Newspaper
 class Newspaper():
-    def __init__(self, date, t, base, button_xpath=None):
+    def __init__(self, date, t, base, button_xpath=None, topics=[]):
         '''
         base = base URL excluding 'HTTPS://www.'
+        t = number of days prior to date to scrape
+        button_xpath = If selenium used to itneract with load more, store full 
         '''
         self.base = "https://www."+base
         self.date = date
         self.t = t
         self.button_xpath = button_xpath
+        self.topics = topics
+        if self.topics == []:
+            self.selective = False
+        else:
+            self.selective = True
         
     def get_urls(self):
         '''
@@ -126,4 +133,32 @@ class NYPost(Newspaper):
                 urls.append(url)
                 
             page += 1
+        return urls
+    
+class WSJ(Newspaper):
+    def __init__(self, date, t):
+        super().__init__(date, t, 
+                         base = "wsj.com/news/archive/",
+                         topics = ['u.s.','tri-state area','u.s. economy'])
+    
+    def get_urls(self):
+        urls = []
+        for subtract_days in range(self.t):
+            day, month, year = self.minus_day(subtract_days)
+            archive_url = self.base + str(year) + two_digit_string(month) + two_digit_string(day)
+            ## Get request for archive url
+            archive_page = requests.get(archive_url, headers=headers).text
+            ## Parse soup for page
+            soup = BeautifulSoup(archive_page,"lxml")
+            
+            for entry in soup.find_all("article", {"class":"WSJTheme--story--XB4V2mLz"}):
+                if self.selective:
+                    ## Check if post is in desired topic
+                    current_topic = entry.find("div", {"class":"WSJTheme--articleType--34Gt-vdG"}).text.lower()
+                    if self.topics.count(current_topic):
+                        url = entry.find('a')['href']
+                        urls.append(url)
+                else:
+                    url = entry.find('a')['href']
+                    urls.append(url)
         return urls
