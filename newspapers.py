@@ -4,8 +4,15 @@ Credit: Simon Dunkelman (www.github.com/SJDunkelman)
 
 Newspaper class for generating urls to pass to scraper class
 '''
-from datetime import timedelta
 import requests
+from datetime import datetime
+import random
+
+from datetime import timedelta
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
 headers = {'User-Agent': 
@@ -24,13 +31,14 @@ def month_to_str(m):
 
 ## Base class: Newspaper
 class Newspaper():
-    def __init__(self, date, t, base):
+    def __init__(self, date, t, base, button_xpath=None):
         '''
         base = base URL excluding 'HTTPS://www.'
         '''
         self.base = "https://www."+base
         self.date = date
         self.t = t
+        self.button_xpath = button_xpath
         
     def get_urls(self):
         '''
@@ -84,4 +92,38 @@ class Guardian(Newspaper):
             ## Extract all links within div class="fc-container__inner"
             content_links = soup.find_all("a", {"class":"fc-item__link"})
             urls.append([content_links[i]['href'] for i in range(len(content_links))])
+        return urls
+    
+class NYPost(Newspaper):
+    def __init__(self, date, t):
+        super().__init__(date, t, 
+                         base = "nypost.com/news/",
+                         button_xpath="/html/body/div[1]/div[4]/div[2]/div/div[1]/div/div[1]/div[2]/div/div/div/a")
+    
+    def get_urls(self):
+        urls = []
+        final_date = self.date - timedelta(days=self.t)
+        page = 1
+        in_range = True
+        while in_range:
+            archive_url = self.base + "page/" + str(page) + "/"            
+            ## Get request for archive url
+            archive_page = requests.get(archive_url, headers=headers).text
+            ## Parse soup for page
+            soup = BeautifulSoup(archive_page,"lxml")
+            
+            for entry in soup.find_all("div", {"class":"entry-header"}):
+                ## Check if post date out of range
+                current_date = entry.find('p').text
+                end_index = current_date.find(' |')
+                current_date = current_date[:end_index]
+                current_date = datetime.strptime(current_date, "%B %d, %Y")
+                if current_date < final_date:
+                    in_range = False
+                    break
+                ## Get URL from thumbnail
+                url = entry.find('a')['href']
+                urls.append(url)
+                
+            page += 1
         return urls
