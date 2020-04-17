@@ -167,7 +167,8 @@ class WSJ(Newspaper):
 class LATimes(Newspaper):
     def __init__(self, date, t):
         super().__init__(date, t, 
-                         base = "latimes.com/sitemap/")
+                         base = "latimes.com/sitemap/",
+                         topics = ['story'])
     
     def get_urls(self):
         urls = []
@@ -211,7 +212,11 @@ class LATimes(Newspaper):
                             if article_date_str:
                                 article_date = datetime.strptime(article_date_str.group(0),"%Y-%m-%d")
                                 if article_date >= final_date:
-                                    urls.append(url)
+                                    ## Check if topic is relevant
+                                    article_topic_str = re.search(r'com\/(.*?)\/\d',url).group(1)
+                                    article_topics = article_topic_str.split('/')
+                                    if any(topic in article_topics for topic in self.topics):
+                                        urls.append(url)
                                 else:
                                     raise StopIteration
                         else:
