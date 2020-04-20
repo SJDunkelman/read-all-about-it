@@ -223,4 +223,41 @@ class LATimes(Newspaper):
                             urls.append(url)
                 except StopIteration:
                     break
+<<<<<<< HEAD
         return urls
+
+class DailyMail(Newspaper):
+    def __init__(self, date, t):
+        super().__init__(date, t, 
+                         base = "dailymail.co.uk/home/sitemaparchive/day_",
+                         topics = ['story'])
+    
+    def get_urls(self):
+        urls = []
+        for subtract_days in range(self.t):
+            day, month, year = self.minus_day(subtract_days)
+            
+            archive_url = self.base + str(year) + two_digit_string(month) + two_digit_string(day) + ".html"
+            archive_page = requests.get(archive_url, headers=headers).text
+            soup = BeautifulSoup(archive_page,"lxml")
+
+            content_box = soup.find("ul",{"class":"archive-articles debate link-box"})            
+            for article in content_box.find_all("a"):
+                url = article['href']
+                
+                ## Extract topics from article URL
+                article_topic_str = re.search(r'(?<=\/)(.*)(?=\/article)',url)
+                if article_topic_str is not None:
+                    article_topics = article_topic_str.group(0).split('/')
+                    if any(topic in article_topics for topic in self.topics):
+                        urls.append(url)
+                else:
+                    article_topics = None
+                
+                print(article_topics)
+
+        return urls
+    
+=======
+        return urls
+>>>>>>> adc2fef9724fdc7afdac14bbf8965bd0bd506eba
