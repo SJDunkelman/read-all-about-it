@@ -8,6 +8,7 @@ import requests
 import re
 from datetime import datetime
 import random
+import time
 
 from datetime import timedelta
 from selenium import webdriver
@@ -256,5 +257,47 @@ class DailyMail(Newspaper):
                 
                 print(article_topics)
 
+        return urls
+    
+class NYTimes(Newspaper):
+    def __init__(self, date, t):
+        super().__init__(date, t, 
+                         base = "nytimes.com/search?dropmab=true&endDate=",
+                         button_xpath = "/html/body/div[1]/div[2]/main/div[1]/div[2]/div[2]/div/button")
+    
+    def get_urls(self):
+        urls = []
+        
+        start_day, start_month, start_year = self.minus_day(self.t)
+        end_day, end_month, end_year = self.minus_day(0)
+        
+        ## Load page for date range to scrape
+        section = "&query=&sections=U.S.%7Cnyt%3A%2F%2Fsection%2Fa34d3d6c-c77f-5931-b951-241b4e28681c&sort=oldest&startDate="
+        archive_url = self.base + str(end_year) + two_digit_string(end_month) + two_digit_string(end_day) + section + str(start_year) + two_digit_string(start_month) + two_digit_string(start_day)
+        print(archive_url)
+        
+        ## Load all content on archive page by clicking 'load more' button
+        driver = webdriver.Chrome('./chromedriver')
+        driver.get(archive_url)
+        
+        while True:
+            try:
+                load_more_button = driver.find_element_by_xpath(self.button_xpath)
+                time.sleep(random.randint(1,5))
+                load_more_button.click()
+                time.sleep(random.randint(1,5))
+            except Exception as e:
+                print(e)
+                break
+        
+        ## Scrape links from archive page
+        archive_html = driver.page_source
+        soup = BeautifulSoup(archive_html,"lxml")
+        
+        content_box = soup.find("ol",{"data-testid":"search-results"})
+        for article in content_box.find_all("li",{"class":"css-1l4w6pd"}):
+            url = "https://www.nytimes.com/" + article.find("a")['href']
+            urls.append(url)
+        
         return urls
     
