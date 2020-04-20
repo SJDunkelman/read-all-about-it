@@ -223,7 +223,7 @@ class LATimes(Newspaper):
                             urls.append(url)
                 except StopIteration:
                     break
-<<<<<<< HEAD
+
         return urls
 
 class DailyMail(Newspaper):
@@ -258,6 +258,3 @@ class DailyMail(Newspaper):
 
         return urls
     
-=======
-        return urls
->>>>>>> adc2fef9724fdc7afdac14bbf8965bd0bd506eba
