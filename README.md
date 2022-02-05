@@ -1,8 +1,8 @@
 
 
 <p align="center">
-    # Read All About It
-    ### Newspaper Text Data Scraper
+    <h1> Read All About It</h1>
+    <h3> Newspaper Text Data Scraper</h3>
 </p>
 --- 
 <p align="center">
