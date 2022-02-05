@@ -1,8 +1,13 @@
-<h1 style="text-align: center;">Read All About It</h1>
 
-<h3 style="text-align: center;">Newspaper Text Data Scraper</h3>
 
-<p style="text-align: center;">🗞 Library for scraping news data from major newspapers in US & UK. </p>
+<p align="center">
+    <h1>Read All About It</h1>
+    <h3 >Newspaper Text Data Scraper</h3>
+</p>
+---
+<p align="center">
+ <em>🗞 Library for scraping news data from major newspapers in US & UK. </em>
+</p>
 
 Gather <i>complete text data</i> including headlines and full article text over for <i>Natural Language Processing</i> projects.
 
@@ -32,13 +37,13 @@ The original intention was to gather data from a much larger group both geograph
 
  I make no promise of maintenance if existing newspaper sites change.
 
-#### Table of Contents
+## Table of Contents
 
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [Development](#development)
 
-#### Installation
+## Installation
 
 ----
 
@@ -47,7 +52,7 @@ git clone https://github.com/SJDunkelman/newspaper_scraper.git
 cd newspaper_scraper
 ```
 
-#### Usage
+## Usage
 
 ----
 
@@ -63,7 +68,7 @@ python main.py
 
 
 
-##### Output
+#### Output
 
 If the <code>fastparquet</code> or <code>pyarrow</code> library is installed then the dataframe will be saved as a parquet binary file, reducing size. If not, the final dataframe is saved as a CSV file and looks like (if <code>full_text=True</code> for Scraper):
 
@@ -72,7 +77,7 @@ If the <code>fastparquet</code> or <code>pyarrow</code> library is installed the
 | Man arrested after... | Guardian | Three men were arrested... | 1/1/2020 |
 | New record set in...  | Guardian | A new world record was...  | 1/1/2020 |
 
-#### Development
+## Development
 
 ----
 
