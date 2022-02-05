@@ -1,10 +1,10 @@
 
 
 <p align="center">
-    <h1>Read All About It</h1>
-    <h3 >Newspaper Text Data Scraper</h3>
+    # Read All About It
+    ### Newspaper Text Data Scraper
 </p>
----
+--- 
 <p align="center">
  <em>🗞 Library for scraping news data from major newspapers in US & UK. </em>
 </p>
@@ -47,7 +47,7 @@ The original intention was to gather data from a much larger group both geograph
 
 ----
 
-```bash
+```console
 git clone https://github.com/SJDunkelman/newspaper_scraper.git
 cd newspaper_scraper
 ```
@@ -62,7 +62,7 @@ In <code>main.py</code> change <code>LAST_DATE</code> to the date you would like
 
 Then run in Terminal:
 
-```bash
+```console
 python main.py
 ```
 
