@@ -1,21 +1,29 @@
 
 
-<p align="center">
-    <h1> Read All About It</h1>
-    <h3> Newspaper Text Data Scraper</h3>
-</p>
---- 
-<p align="center">
- <em>🗞 Library for scraping news data from major newspapers in US & UK. </em>
+<p >
+    <h1 align="center"> Read All About It</h1>
+    <h3 align="center"> Newspaper Text Data Scraper</h3>
 </p>
 
-Gather <i>complete text data</i> including headlines and full article text over for <i>Natural Language Processing</i> projects.
+--- 
+
+<p align="center">
+🗞 Library for scraping news data from major newspapers in US & UK.
+</p>
+
+Gather complete text data including headlines and full article text over for <i>Natural Language Processing</i> projects.
 
 URLs for individual articles are scraped from the news site, then the library <code> newspaper3k  </code> is used to curate article content.
 
 This project was originally intended to be used to track the relationship between the sentiment of Covid-19 related articles in reported news and returns in the stock market, therefore in <code>sentiment.py </code> the Harvard IV/Lasswell Pyschosocial dictionary is loaded and may be used to create a basic Document-Term matrix. The intention was to further expand this with feature-based sentiment analysis (pre-reading content included in repo for interested parties) but this project has now been abandoned for the foreseeable future.
 
-##### Newspapers Supported
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Development](#development)
+
+### Newspapers Supported
 
 📰🇬🇧	Guardian
 
@@ -36,12 +44,6 @@ This project was originally intended to be used to track the relationship betwee
 The original intention was to gather data from a much larger group both geographically and politically, but the underlying research project was abandoned as a matter of priority. If you would like me to add a newspaper source please add it as an issue and I will add it.
 
  I make no promise of maintenance if existing newspaper sites change.
-
-## Table of Contents
-
-1. [Installation](#installation)
-2. [Usage](#usage)
-3. [Development](#development)
 
 ## Installation
 
